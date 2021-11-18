@@ -3,7 +3,10 @@ package br.com.test.main;
 
 import br.com.code.Logic;
 import br.com.test.auxiliary.CustomAnnotation;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import twitter4j.Query;
+import twitter4j.QueryResult;
 import twitter4j.TwitterException;
 
 import java.io.IOException;
@@ -36,9 +39,41 @@ public class MainTest {
     @CustomAnnotation
     @ValueSource(strings = "Twitter")
     void showTweets(String handle)throws TwitterException, IOException{
-        int expectedTweets = 1998;
-        int actualTweets = myPoster.queryTweetsByHandle(handle);
-        assertEquals(expectedTweets,actualTweets);
+        String expectedHandle = handle;
+        String actualHandle = myPoster.queryTweetsByHandle(handle);
+        assertEquals(expectedHandle,actualHandle);
+    }
+
+    @CustomAnnotation
+    @CsvSource(value = {"Activision,80"})
+    void queryForTweetsTopicBased (String topic, int maxResults) throws TwitterException {
+        String expectedTopic = topic;
+        int  expectedMaxResults = maxResults;
+        Query result = myPoster.queryTweets(topic,maxResults);
+
+        String actualTopic = result.getQuery();
+        int actualMaxResults = result.getCount();
+
+        assertEquals(expectedTopic, actualTopic);
+        assertEquals(expectedMaxResults,actualMaxResults);
+    }
+
+    @CustomAnnotation
+    @CsvSource("Activision, 2021-11-18, 80")
+    void queryForTweetsDateBased (String topic, String date, int maxResults) throws TwitterException {
+        String expectedTopic = topic;
+        String expectedDate = date;
+        int expectedMaxResults = maxResults;
+
+        Query result = myPoster.queryTweets(topic, date, maxResults);
+        String actualTopic = result.getQuery();
+        String actualDate = result.getSince();
+        int actualMaxResults = result.getCount();
+
+        assertEquals(expectedTopic, actualTopic);
+        assertEquals(expectedDate, actualDate);
+        assertEquals(expectedMaxResults, actualMaxResults);
+
     }
 
 

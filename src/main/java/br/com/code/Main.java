@@ -10,9 +10,6 @@ public class Main {
 
     public static void main(String[] args) throws TwitterException, IOException {
     Logic twitterPoster = new Logic (printer);
-
-    twitterPoster.queryTweets("Activision","17-11-2021",40);
-
     }
 }
 

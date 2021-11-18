@@ -2,10 +2,8 @@ package br.com.code;
 
 import twitter4j.*;
 
-import javax.swing.text.DateFormatter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +65,7 @@ public class Logic {
      *
      * Fetches and outputs the tweets for the given user handle
      */
-    public int queryTweetsByHandle(String handle) throws TwitterException, IOException{
+    public String queryTweetsByHandle(String handle) throws TwitterException, IOException{
         statusList.clear();
         fetchUserTweets(handle);
         int counter = statusList.size();
@@ -76,56 +74,30 @@ public class Logic {
             counter--;
             System.out.println("Tweet #" + counter + ": " + statusList.get(counter).getText());
         }
-        int totalTweets = statusList.size();
-        return totalTweets;
+        return handle;
     }
 
-    public void queryTweets(String topic, int maxResults){
+    public Query queryTweets (String topic, int maxResults) throws TwitterException {
         Query query = new Query(topic);
         query.setCount(maxResults);
+        QueryResult result = twitter.search(query);
 
-        try {
-            int counter = 0;
-            QueryResult result = twitter.search(query);
-            System.out.println("Total tweets fetched " + result.getTweets().size());
-            for(Status tweet : result.getTweets()){
-                counter++;
-                System.out.println("Tweet #" + counter + " by user @" + tweet.getUser().getName() +
-                        "Content: \n" + tweet.getText() + "\n");
-            }
-        }
-        catch (TwitterException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void queryTweets (String topic, int maxResults, String location){
-        Query query = new Query(topic);
-        query.setCount(maxResults);
-        query.setLocale(location);
-
-        try {
-            int counter = 0;
-            QueryResult result = twitter.search(query);
-            System.out.println("Total tweets #" + result.getTweets().size());
+        int counter = 0;
+        System.out.println("Total tweets #" + result.getTweets().size());
 
             for(Status tweet : result.getTweets()){
                 counter++;
                 System.out.println("Tweet #" + counter + " by user @" + tweet.getUser().getName()
                 + "Content: \n" + tweet.getText() + "\n");
-            }
         }
-        catch (TwitterException e){
-            e.printStackTrace();
-        }
+        return query;
     }
 
-    public void queryTweets (String topic, String date, int maxResults){
+    public Query queryTweets (String topic, String date, int maxResults) throws TwitterException {
         Query query  = new Query(topic);
         query.setSince(date);
         query.setCount(maxResults);
 
-        try{
             int counter = 0;
             QueryResult result = twitter.search(query);
             System.out.println("Total tweets #" + result.getTweets().size());
@@ -135,9 +107,8 @@ public class Logic {
                 System.out.println("Tweet #" + counter + " by user @" + tweet.getUser().getName()
                         + "Content: \n" + tweet.getText() + "\n");
             }
-        }
-        catch (TwitterException e){
-            e.printStackTrace();
-        }
+
+
+        return query;
     }
 }
